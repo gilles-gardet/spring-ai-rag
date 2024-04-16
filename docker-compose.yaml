@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+  ai-ollama:
+    build: .
+    container_name: ai-ollama
+    image: ollama/ollama
+    restart: unless-stopped
+    healthcheck:
+      test: ollama --version || exit 1
+      interval: 10s
+    ports:
+      - "11400:11434"
+    volumes:
+      - ./docker/ollama:/root/.ollama
+  ai-database:
+    container_name: ai-database
+    image: qdrant/qdrant:latest
+    restart: unless-stopped
+    environment:
+      QDRANT__SERVICE__GRPC_PORT: 6334
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - ./docker/qdrant:/qdrant/storage

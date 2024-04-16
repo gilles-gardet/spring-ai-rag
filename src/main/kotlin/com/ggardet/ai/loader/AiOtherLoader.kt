@@ -1,0 +1,9 @@
+package com.ggardet.ai.loader
+
+import org.springframework.ai.document.Document
+import org.springframework.ai.reader.tika.TikaDocumentReader
+import org.springframework.core.io.Resource
+
+class AiOtherLoader : AiLoader {
+    override fun load(resource: Resource, name: String?): List<Document> = TikaDocumentReader(resource).get()
+}
