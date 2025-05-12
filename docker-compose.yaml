@@ -1,12 +1,16 @@
 services:
-  ai-ollama:
-    build: .
-    container_name: ai-ollama
-    image: ollama/ollama
-    restart: unless-stopped
-    healthcheck:
-      test: ollama --version || exit 1
-      interval: 10s
+#  ai-ollama: # HINT: uncomment to use ollama instead of mistral
+#    build: .
+#    container_name: ai-ollama
+#    image: ollama/ollama
+#    restart: unless-stopped
+#    healthcheck:
+#      test: ollama --version || exit 1
+#      interval: 10s
+#    ports:
+#      - "11400:11434"
+#    volumes:
+#      - ./docker/ollama:/root/.ollama
   postgresql:
     container_name: ai-referential
     image: postgres:14.4
