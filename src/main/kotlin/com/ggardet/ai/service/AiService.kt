@@ -17,9 +17,9 @@ class AiService(
     private val chatClient: ChatClient,
     private val vectorStore: VectorStore
 ) {
-    fun chat(query: String): String {
+    fun chat(query: String): String? {
         val documents = searchDocuments(query)
-        val prompt = createPrompt(query, documents)
+        val prompt = createPrompt(query, documents.orEmpty())
         return chatClient.prompt(prompt).call().content()
     }
 
@@ -28,8 +28,8 @@ class AiService(
         return PromptTemplate(this.llmPrompt).create(context)
     }
 
-    fun searchDocuments(query: String): List<Document> {
-        val searchRequest = SearchRequest.query(query).withTopK(2)
+    fun searchDocuments(query: String): List<Document>? {
+        val searchRequest = SearchRequest.builder().query(query).topK(2).build()
         return vectorStore.similaritySearch(searchRequest)
     }
 }
