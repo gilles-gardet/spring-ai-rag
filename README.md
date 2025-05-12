@@ -17,7 +17,7 @@ Or you can build it manually using the following command:
 docker compose -f docker-compose.yaml up -d
 ```
 
-Then you cand download a local LLM model using the following command (you can choose any model available on [Ollama](https://ollama.com/models)):
+Then you can download a local LLM model using the following command (you can choose any model available on [Ollama](https://ollama.com/models)):
 
 ```shell
 docker exec -it ai-ollama ollama run gemma:2b
@@ -25,8 +25,8 @@ docker exec -it ai-ollama ollama run gemma:2b
 
 ## Use a remote LLM
 
-It is also possible to use directly a remote LLM like Mistral by setting your `MISTRALAI_API_KEY` environment variable and
-uncommenting the `mistralai` section in the `application.yml` file (and comment the `ollama` section).
+It is also possible to directly use a remote LLM like ChatGPT by setting your `OPENAI_API_KEY` environment variable and
+uncommenting (if it's the case) the `openai` section in the `application.yml` file (and comment the `ollama` section).
 
 ## Run the application
 
@@ -34,6 +34,15 @@ After that you should be able to run the application and ask questions using the
 
 ```shell
 mvn spring-boot:run
-# a shell will be opened in which you can ask questions
-ask "what are the hobbies of Gilles ?"
+```
+
+## Use the application
+
+You can use the application by running the following command:
+
+```shell
+# ask a question using the RAG system
+rag "what are the hobbies of Gilles ?"
+# interact with the database using LLM tools
+tool "what is the name of the person whos email address is 'john.doe@example.com'"
 ```
