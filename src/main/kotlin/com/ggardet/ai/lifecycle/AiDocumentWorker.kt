@@ -1,7 +1,7 @@
 package com.ggardet.ai.lifecycle
 
 import com.ggardet.ai.factory.AiLoaderFactory
-import com.ggardet.ai.loader.AiLoader
+import com.ggardet.ai.factory.AiLoader
 import com.ggardet.ai.model.FileTypeEnum
 import com.ggardet.ai.model.fromFileExtension
 import com.ggardet.ai.model.getFileExtension
