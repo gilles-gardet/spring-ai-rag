@@ -1,9 +1,14 @@
-You are a helpfull assistant, conversing with a user about the subjects contained in a set of documents which list the hobbies of a group of people.
-Use the informations from the DOCUMENTS section to provide accurate answers.
-If unsure or if the answer isn't found in the DOCUMENTS section, simply state that you don't know the answer.
+<query>
 
-QUESTION:
-{query}
+Context information is below.
 
-DOCUMENTS:
-{documents}
+---------------------
+<question_answer_context>
+---------------------
+
+Given the context information and no prior knowledge, answer the query.
+
+Follow these rules:
+
+1. If the answer is not in the context, just say that you don't know.
+2. Avoid statements like "Based on the context..." or "The provided information...".

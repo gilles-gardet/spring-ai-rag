@@ -7,6 +7,9 @@ import org.springframework.shell.standard.ShellMethod
 @ShellComponent
 class AiCommand(val aiService: AiService) {
 
-    @ShellMethod(key = ["ask"], value = "ask a question to the AI chat bot")
-    fun askQuestion(query: String) = aiService.chat(query)
+    @ShellMethod(key = ["rag"], value = "ask a question to the AI about the documents (RAG)")
+    fun queryRagDocuments(query: String) = aiService.queryRagDocuments(query)
+
+    @ShellMethod(key = ["tool"], value = "interact with the database using AI (Tool)")
+    fun queryDatabaseTools(query: String) = aiService.queryDatabaseTools(query)
 }

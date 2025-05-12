@@ -1,35 +1,35 @@
 package com.ggardet.ai.service
 
+import com.ggardet.ai.tool.repository.AddressRepository
+import com.ggardet.ai.tool.repository.PersonRepository
+import com.ggardet.ai.tool.service.AddressTool
+import com.ggardet.ai.tool.service.PersonTool
 import org.springframework.ai.chat.client.ChatClient
 import org.springframework.ai.chat.prompt.Prompt
-import org.springframework.ai.chat.prompt.PromptTemplate
-import org.springframework.ai.document.Document
-import org.springframework.ai.vectorstore.SearchRequest
-import org.springframework.ai.vectorstore.VectorStore
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.core.io.Resource
 import org.springframework.stereotype.Service
 
 @Service
 class AiService(
-    @Value("classpath:/prompt.st")
-    private val llmPrompt: Resource,
-    private val chatClient: ChatClient,
-    private val vectorStore: VectorStore
+    private val chatClientBuilder: ChatClient.Builder,
+    private val prompt: Prompt,
+    private val addressRepository: AddressRepository,
+    private val personRepository: PersonRepository
 ) {
-    fun chat(query: String): String? {
-        val documents = searchDocuments(query)
-        val prompt = createPrompt(query, documents.orEmpty())
-        return chatClient.prompt(prompt).call().content()
-    }
+    fun queryRagDocuments(query: String): String? =
+        chatClientBuilder.build()
+            .prompt(prompt)
+            .user(query)
+            .call()
+            .content()
 
-    fun createPrompt(query: String, documents: List<Document>): Prompt {
-        val context = mapOf("query" to query, "documents" to documents)
-        return PromptTemplate(this.llmPrompt).create(context)
-    }
-
-    fun searchDocuments(query: String): List<Document>? {
-        val searchRequest = SearchRequest.builder().query(query).topK(2).build()
-        return vectorStore.similaritySearch(searchRequest)
+    fun queryDatabaseTools(query: String): String? {
+        val addressTool = AddressTool(addressRepository)
+        val personTool = PersonTool(personRepository)
+        return chatClientBuilder.build()
+            .prompt(prompt)
+            .tools(addressTool, personTool)
+            .user(query)
+            .call()
+            .content()
     }
 }
