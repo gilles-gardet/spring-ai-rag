@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   ai-ollama:
     build: .
@@ -8,12 +7,20 @@ services:
     healthcheck:
       test: ollama --version || exit 1
       interval: 10s
+  postgresql:
+    container_name: ai-referential
+    image: postgres:14.4
+    restart: always
+    environment:
+      POSTGRES_DB: ai-referential
+      POSTGRES_USER: gilles
+      POSTGRES_PASSWORD: password
     ports:
-      - "11400:11434"
+      - "5432:5432"
     volumes:
-      - ./docker/ollama:/root/.ollama
-  ai-database:
-    container_name: ai-database
+      - postgresql-data:/var/lib/postgresql/data/
+  qdrant:
+    container_name: ai-vectorestore
     image: qdrant/qdrant:latest
     restart: unless-stopped
     environment:
@@ -21,5 +28,16 @@ services:
     ports:
       - "6333:6333"
       - "6334:6334"
+    expose:
+      - 6333
+      - 6334
+      - 6335
     volumes:
-      - ./docker/qdrant:/qdrant/storage
+      - qdrant-data:/qdrant/storage
+volumes:
+  postgresql-data:
+    name: postgresql-data
+    external: true
+  qdrant-data:
+    name: qdrant-data
+    external: true

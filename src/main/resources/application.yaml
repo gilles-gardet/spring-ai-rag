@@ -1,4 +1,16 @@
 spring:
+  datasource:
+    url: ${DB_JDBC_URL:jdbc:postgresql://localhost:5432/ai-referential}
+    username: ${DB_JDBC_USERNAME:gilles}
+    password: ${DB_JDBC_PASSWORD:password}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
   ai:
     ollama:
       base-url: http://localhost:11400
@@ -16,4 +28,5 @@ spring:
   docker.compose:
     enabled: true
     lifecycle-management: start_and_stop
+  liquibase.change-log: classpath:/db/changelog/db.changelog-master.yml
   threads.virtual.enabled: true
