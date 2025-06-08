@@ -20,9 +20,9 @@ services:
       POSTGRES_USER: gilles
       POSTGRES_PASSWORD: password
     ports:
-      - "5432:5432"
+      - "5434:5432"
     volumes:
-      - postgresql-data:/var/lib/postgresql/data/
+      - postgresql-rag-data:/var/lib/postgresql/data/
   qdrant:
     container_name: ai-vectorestore
     image: qdrant/qdrant:latest
@@ -30,18 +30,18 @@ services:
     environment:
       QDRANT__SERVICE__GRPC_PORT: 6334
     ports:
-      - "6333:6333"
-      - "6334:6334"
+      - "6343:6333"
+      - "6344:6334"
     expose:
       - 6333
       - 6334
       - 6335
     volumes:
-      - qdrant-data:/qdrant/storage
+      - qdrant-rag-data:/qdrant/storage
 volumes:
-  postgresql-data:
-    name: postgresql-data
+  postgresql-rag-data:
+    name: postgresql-rag-data
     external: true
-  qdrant-data:
-    name: qdrant-data
+  qdrant-rag-data:
+    name: qdrant-rag-data
     external: true

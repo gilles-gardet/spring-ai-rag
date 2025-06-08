@@ -1,10 +1,10 @@
-# Command Line Interface AI
+# Spring AI RAG & tool calling 
 
-To run the application you need first to create docker volumes for the database and the vector container:
+To run the application, you need first to create docker volumes for the database and the vector container:
 
 ```shell
-docker volume create postgresql-data
-docker volume create qdrant-data
+docker volume create postgresql-rag-data
+docker volume create qdrant-rag-data
 ```
 
 ## Use a local LLM
@@ -41,8 +41,8 @@ mvn spring-boot:run
 You can use the application by running the following command:
 
 ```shell
-# ask a question using the RAG system
+# either ask a question using the RAG system
 rag "what are the hobbies of Gilles ?"
-# interact with the database using LLM tools
+# or interact with the database using LLM tools
 tool "what is the name of the person whos email address is 'john.doe@example.com'"
 ```
