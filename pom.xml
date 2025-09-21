@@ -36,7 +36,7 @@
             <dependency>
                 <groupId>org.springframework.ai</groupId>
                 <artifactId>spring-ai-bom</artifactId>
-                <version>1.0.0</version>
+                <version>1.0.2</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -79,6 +79,10 @@
         <dependency>
             <groupId>org.springframework.ai</groupId>
             <artifactId>spring-ai-pdf-document-reader</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-rag</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.ai</groupId>
