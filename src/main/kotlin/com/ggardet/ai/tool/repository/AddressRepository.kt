@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface AddressRepository : JpaRepository<Address, Long> {
-    fun findByPerson_EmailAndIsPrimaryTrue(email: String): Address?
+    fun findByPerson_LastName(lastName: String): Address?
 }

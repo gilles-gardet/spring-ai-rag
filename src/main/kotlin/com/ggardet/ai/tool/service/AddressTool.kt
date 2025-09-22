@@ -18,5 +18,5 @@ class AddressTool(private val addressRepository: AddressRepository) {
             required = true,
             description = "The lastname of the person's address to find"
         ) lastname: String
-    ): Address? = addressRepository.findByPerson_EmailAndIsPrimaryTrue(lastname)
+    ): Address? = addressRepository.findByPerson_LastName(lastname)
 }

@@ -1,22 +1,22 @@
-Gilles hobbies:
+Gilles Gardet hobbies:
 - coding
 - homelab
 - cinema
 
-Clara's hobbies:
+Clara Gardet hobbies:
 - drawing
 - playing
 - creating
 - reading
 
-Anna's hobbies:
+Anna Gardet hobbies:
 - painting
 - hiking
 - photography
 - yoga
 - reading
 
-Adeline's hobbies:
+Adeline Gardet hobbies:
 - gardening
 - knitting
 - traveling

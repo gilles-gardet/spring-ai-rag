@@ -41,8 +41,10 @@ mvn spring-boot:run
 You can use the application by running the following command:
 
 ```shell
-# either ask a question using the RAG system
-rag "what are the hobbies of Gilles ?"
+# either ask a question relative to the content stored in the vectorial database
+vector "what are the hobbies of Gilles ?"
 # or interact with the database using LLM tools
 tool "what is the name of the person whos email address is 'john.doe@example.com'"
+# or ask a question for which the LLM will perform a web search
+search "what is the latest news about AI ?"
 ```

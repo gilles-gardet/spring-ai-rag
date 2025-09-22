@@ -1,69 +1,67 @@
+@file:OptIn(ExperimentalUuidApi::class)
+
 package com.ggardet.ai.config
 
 import com.ggardet.ai.retriever.SearchEngineDocumentRetriever
 import org.springframework.ai.chat.client.ChatClient
+import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor
+import org.springframework.ai.chat.client.advisor.SafeGuardAdvisor
+import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor
+import org.springframework.ai.chat.memory.ChatMemory
+import org.springframework.ai.chat.memory.MessageWindowChatMemory
 import org.springframework.ai.chat.model.ChatModel
 import org.springframework.ai.chat.prompt.Prompt
 import org.springframework.ai.chat.prompt.SystemPromptTemplate
-import org.springframework.ai.rag.advisor.RetrievalAugmentationAdvisor
-import org.springframework.ai.rag.generation.augmentation.ContextualQueryAugmenter
-import org.springframework.ai.rag.preretrieval.query.transformation.RewriteQueryTransformer
-import org.springframework.ai.rag.retrieval.search.VectorStoreDocumentRetriever
-import org.springframework.ai.vectorstore.VectorStore
-import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.io.Resource
 import org.springframework.web.client.RestClient
+import kotlin.uuid.ExperimentalUuidApi
 
 
 @Configuration
 class AiConfig {
     @Bean
-    fun ragPrompt(@Value("classpath:/prompt.st") prompt: Resource): Prompt =
+    fun ragPrompt(@Value("classpath:/prompt.st") prompt: Resource): Prompt? =
         SystemPromptTemplate(prompt).create()
 
     @Bean
     fun chatClientBuilder(
         chatModel: ChatModel,
-        @Qualifier("webRagAdvisor") webRagAdvisor: RetrievalAugmentationAdvisor,
-        @Qualifier("vectorRagAdvisor") vectorRagAdvisor: RetrievalAugmentationAdvisor,
-    ): ChatClient.Builder = ChatClient.builder(chatModel).defaultAdvisors(webRagAdvisor, vectorRagAdvisor)
+        prompt: Prompt,
+        messageChatMemoryAdvisor: MessageChatMemoryAdvisor,
+        safeGuardAdvisor: SafeGuardAdvisor
+    ): ChatClient.Builder {
+        val systemMessage = prompt.contents
+        return ChatClient.builder(chatModel)
+            .defaultSystem(systemMessage)
+            .defaultAdvisors(
+                SimpleLoggerAdvisor(),
+                messageChatMemoryAdvisor,
+                safeGuardAdvisor
+            )
+    }
 
-    @Bean("webRagAdvisor")
-    fun webRagAdvisor(
-        chatClientBuilder: ChatClient.Builder,
-        searchEngineDocumentRetriever: SearchEngineDocumentRetriever
-    ): RetrievalAugmentationAdvisor =
-        RetrievalAugmentationAdvisor.builder()
-            .queryTransformers(
-                RewriteQueryTransformer.builder()
-                    .chatClientBuilder(chatClientBuilder.clone())
-                    .targetSearchSystem("web search engine")
-                    .build()
-            )
-            .documentRetriever(searchEngineDocumentRetriever)
-            .queryAugmenter(
-                ContextualQueryAugmenter.builder()
-                    .allowEmptyContext(false)
-                    .build()
-            )
-            .build()
+    @Bean
+    fun safeGuardAdvisor(): SafeGuardAdvisor = SafeGuardAdvisor.builder()
+        // should block any question related to broccolis
+        .sensitiveWords(mutableListOf("broccoli"))
+        .failureResponse("Sorry, I can't process that request.")
+        .build()
 
-    @Bean("vectorRagAdvisor")
-    fun vectorRagAdvisor(vectorStore: VectorStore): RetrievalAugmentationAdvisor =
-        RetrievalAugmentationAdvisor.builder()
-            .documentRetriever(
-                VectorStoreDocumentRetriever.builder()
-                    .vectorStore(vectorStore)
-                    .similarityThreshold(0.5)
-                    .topK(3)
-                    .build()
-            )
+    @Bean
+    fun chatMemory(): ChatMemory = MessageWindowChatMemory.builder().build()
+
+    @Bean
+    fun messageChatMemoryAdvisor(chatMemory: ChatMemory): MessageChatMemoryAdvisor =
+        MessageChatMemoryAdvisor.builder(chatMemory)
             .build()
 
     @Bean
+    fun restClientBuilder(): RestClient.Builder = RestClient.builder()
+
+    @Bean
     fun searchEngineDocumentRetriever(restClientBuilder: RestClient.Builder): SearchEngineDocumentRetriever =
-        SearchEngineDocumentRetriever(restClientBuilder, 10)
+        SearchEngineDocumentRetriever(restClientBuilder, 5)
 }

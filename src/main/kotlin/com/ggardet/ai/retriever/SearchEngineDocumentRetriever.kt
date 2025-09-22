@@ -8,7 +8,7 @@ import org.springframework.ai.rag.retrieval.search.DocumentRetriever
 import org.springframework.http.HttpHeaders
 import org.springframework.web.client.RestClient
 
-private const val URL_TAVILY_API = "https://api.tavily.com/search"
+private const val TAVILY_API_URL = "https://api.tavily.com/search"
 
 class SearchEngineDocumentRetriever(
     restClientBuilder: RestClient.Builder,
@@ -16,7 +16,7 @@ class SearchEngineDocumentRetriever(
 ) : DocumentRetriever {
 
     private val restClient: RestClient = restClientBuilder
-        .baseUrl(URL_TAVILY_API)
+        .baseUrl(TAVILY_API_URL)
         .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer ${System.getenv("TAVILY_API_KEY")}")
         .build()
 
