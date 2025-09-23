@@ -1,32 +1,80 @@
-# Spring AI RAG & tool calling 
+# Spring AI RAG & tool calling
 
-To run the application, you need first to create docker volumes for the database and the vector container:
+This application supports both OpenAI and Ollama as LLM providers through Spring profiles.
+
+## Prerequisites
+
+Create docker volumes for the database and vector store:
 
 ```shell
 docker volume create postgresql-rag-data
 docker volume create qdrant-rag-data
 ```
 
-## Use a local LLM
+## Configuration Profiles
 
-The ollama image/container should be automatically be downloaded/built from the `spring-boot-docker-compose` dependency.  
+### Using OpenAI (Default)
 
-Or you can build it manually using the following command:
-
+1. Set your API keys:
 ```shell
-docker compose -f docker-compose.yaml up -d
+export OPENAI_API_KEY=your-openai-api-key-here
+export TAVILY_API_KEY=your-tavily-api-key-here
 ```
 
-Then you can download a local LLM model using the following command (you can choose any model available on [Ollama](https://ollama.com/models)):
-
+2. Start infrastructure services:
 ```shell
-docker exec -it ai-ollama ollama run gemma:2b
+docker compose up -d
 ```
 
-## Use a remote LLM
+3. Run the application with OpenAI profile:
+```shell
+mvn spring-boot:run -Dspring-boot.run.profiles=openai
+```
 
-It is also possible to directly use a remote LLM like ChatGPT by setting your `OPENAI_API_KEY` environment variable and
-uncommenting (if it's the case) the `openai` section in the `application.yml` file (and comment the `ollama` section).
+### Using Ollama (Local LLM)
+
+1. Create the ollama volume:
+```shell
+docker volume create ollama-data
+```
+
+2. Start services including Ollama:
+```shell
+docker compose -f docker-compose-ollama.yaml up -d
+```
+
+3. Download the required models:
+```shell
+# Download the chat model (deepseek-r1:1.5b)
+docker exec -it ai-ollama ollama pull deepseek-r1:1.5b
+
+# Download the embedding model
+docker exec -it ai-ollama ollama pull nomic-embed-text
+```
+
+You can also use other models from [Ollama models](https://ollama.com/models) by setting the environment variables `OLLAMA_CHAT_MODEL` and `OLLAMA_EMBEDDING_MODEL`.
+
+4. Set your Tavily API key for web search:
+```shell
+export TAVILY_API_KEY=your-tavily-api-key-here
+```
+
+5. Run the application with Ollama profile:
+```shell
+mvn spring-boot:run -Dspring-boot.run.profiles=ollama
+```
+
+## Environment Variables
+
+### OpenAI Profile
+- `OPENAI_API_KEY` - Your OpenAI API key (required)
+- `TAVILY_API_KEY` - Your Tavily API key for web search (required for web search functionality)
+
+### Ollama Profile
+- `TAVILY_API_KEY` - Your Tavily API key for web search (required for web search functionality)
+- `OLLAMA_BASE_URL` - Ollama server URL (default: http://localhost:11400)
+- `OLLAMA_CHAT_MODEL` - Chat model name (default: deepseek-r1:1.5b)
+- `OLLAMA_EMBEDDING_MODEL` - Embedding model name (default: nomic-embed-text)
 
 ## Run the application
 
@@ -41,10 +89,15 @@ mvn spring-boot:run
 You can use the application by running the following command:
 
 ```shell
-# either ask a question relative to the content stored in the vectorial database
-vector "what are the hobbies of Gilles ?"
-# or interact with the database using LLM tools
-tool "what is the name of the person whos email address is 'john.doe@example.com'"
-# or ask a question for which the LLM will perform a web search
-search "what is the latest news about AI ?"
+# Basic LLM query
+basic "what is the capital of France?"
+
+# Query the vector store with RAG
+vector "what are the hobbies of Gilles?"
+
+# Use database tools
+tool "what is the name of the person whose email address is 'john.doe@example.com'"
+
+# Web search with LLM
+web "what is the latest news about AI?"
 ```

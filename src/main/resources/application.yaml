@@ -14,13 +14,6 @@ spring:
         format_sql: true
     show-sql: true
   ai:
-#    ollama: # HINT: uncomment to use ollama instead of mistral
-#      base-url: http://localhost:11400
-#      chat.options:
-#        model: mistral
-#        temperature: 0.7
-    openai: # HINT: comment to use ollama instead of mistral
-      api-key: ${OPENAI_API_KEY}
     vectorstore.qdrant:
       host: ${QDRANT_HOST:localhost}
       port: ${QDRANT_PORT:6344}
