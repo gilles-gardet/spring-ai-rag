@@ -41,7 +41,5 @@ services:
 volumes:
   postgresql-rag-data:
     name: postgresql-rag-data
-    external: true
   qdrant-rag-data:
     name: qdrant-rag-data
-    external: true

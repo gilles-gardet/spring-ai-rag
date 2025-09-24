@@ -2,15 +2,6 @@
 
 This application supports both OpenAI and Ollama as LLM providers through Spring profiles.
 
-## Prerequisites
-
-Create docker volumes for the database and vector store:
-
-```shell
-docker volume create postgresql-rag-data
-docker volume create qdrant-rag-data
-```
-
 ## Configuration Profiles
 
 ### Using OpenAI (Default)
@@ -33,17 +24,7 @@ mvn spring-boot:run -Dspring-boot.run.profiles=openai
 
 ### Using Ollama (Local LLM)
 
-1. Create the ollama volume:
-```shell
-docker volume create ollama-data
-```
-
-2. Start services including Ollama:
-```shell
-docker compose -f docker-compose-ollama.yaml up -d
-```
-
-3. Download the required models:
+1. Download the required models:
 ```shell
 # Download the chat model (deepseek-r1:1.5b)
 docker exec -it ai-ollama ollama pull deepseek-r1:1.5b
@@ -54,12 +35,12 @@ docker exec -it ai-ollama ollama pull nomic-embed-text
 
 You can also use other models from [Ollama models](https://ollama.com/models) by setting the environment variables `OLLAMA_CHAT_MODEL` and `OLLAMA_EMBEDDING_MODEL`.
 
-4. Set your Tavily API key for web search:
+2. Set your Tavily API key for web search:
 ```shell
 export TAVILY_API_KEY=your-tavily-api-key-here
 ```
 
-5. Run the application with Ollama profile:
+3. Run the application with Ollama profile:
 ```shell
 mvn spring-boot:run -Dspring-boot.run.profiles=ollama
 ```
@@ -75,14 +56,6 @@ mvn spring-boot:run -Dspring-boot.run.profiles=ollama
 - `OLLAMA_BASE_URL` - Ollama server URL (default: http://localhost:11400)
 - `OLLAMA_CHAT_MODEL` - Chat model name (default: deepseek-r1:1.5b)
 - `OLLAMA_EMBEDDING_MODEL` - Embedding model name (default: nomic-embed-text)
-
-## Run the application
-
-After that you should be able to run the application and ask questions using the command line interface:
-
-```shell
-mvn spring-boot:run
-```
 
 ## Use the application
 
