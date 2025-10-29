@@ -5,7 +5,9 @@ import com.ggardet.ai.tool.repository.AddressRepository
 import org.springframework.ai.tool.annotation.Tool
 import org.springframework.ai.tool.annotation.ToolParam
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
+@Transactional(readOnly = true)
 @Service
 class AddressTool(private val addressRepository: AddressRepository) {
 

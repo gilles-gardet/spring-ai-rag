@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 
+@Transactional(readOnly = true)
 @Service
 class PersonTool(private val personRepository: PersonRepository) {
 
