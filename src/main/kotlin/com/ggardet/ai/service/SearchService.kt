@@ -9,6 +9,7 @@ import org.springframework.ai.rag.advisor.RetrievalAugmentationAdvisor
 import org.springframework.ai.rag.generation.augmentation.ContextualQueryAugmenter
 import org.springframework.ai.rag.preretrieval.query.transformation.RewriteQueryTransformer
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Flux
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -38,12 +39,12 @@ class SearchService(
         )
         .build()
 
-    override fun query(query: String): String? =
+    override fun query(query: String): Flux<String> =
         chatClientBuilder.build()
             .prompt()
             .advisors(searchAdvisor)
             .advisors { it.param(CONVERSATION_ID, conversationIdValue) }
             .user(query)
-            .call()
+            .stream()
             .content()
 }

@@ -17,13 +17,21 @@ class AiCommand(
 
     @ShellMethod(key = ["basic"], value = "ask a question to the LLM")
     fun queryLlm(query: String) = basicService.query(query)
+        .doOnNext { chunk -> print(chunk) }
+        .blockLast()
 
     @ShellMethod(key = ["vector"], value = "ask the LLM to find answers using the vector store")
     fun queryVector(query: String) = vectorService.query(query)
+        .doOnNext { chunk -> print(chunk) }
+        .blockLast()
 
     @ShellMethod(key = ["tool"], value = "ask the LLM to use tools to answer the question")
     fun queryTool(query: String) = toolService.query(query)
+        .doOnNext { chunk -> print(chunk) }
+        .blockLast()
 
     @ShellMethod(key = ["web"], value = "ask the LLM to search answers through the web")
     fun queryWeb(query: String) = searchService.query(query)
+        .doOnNext { chunk -> print(chunk) }
+        .blockLast()
 }

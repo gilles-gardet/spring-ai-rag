@@ -59,7 +59,7 @@ mvn spring-boot:run -Dspring-boot.run.profiles=ollama
 
 ## Use the application
 
-You can use the application by running the following command:
+You can use the application by running the following command directly from the shell:
 
 ```shell
 # Basic LLM query

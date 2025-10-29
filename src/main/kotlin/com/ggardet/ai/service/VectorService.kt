@@ -12,6 +12,7 @@ import org.springframework.ai.rag.preretrieval.query.transformation.TranslationQ
 import org.springframework.ai.rag.retrieval.search.VectorStoreDocumentRetriever
 import org.springframework.ai.vectorstore.VectorStore
 import org.springframework.stereotype.Service
+import reactor.core.publisher.Flux
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -33,7 +34,7 @@ class VectorService(
         )
         .queryTransformers(
             // uses a large language model to rewrite a user query to provide better results when querying a
-            // target system, such as a vector store or a web search engine
+            // target system, such as a vector store
             RewriteQueryTransformer.builder()
                 .chatClientBuilder(chatClientBuilder.clone())
                 .targetSearchSystem("vector store")
@@ -60,12 +61,12 @@ class VectorService(
         )
         .build()
 
-    override fun query(query: String): String? =
+    override fun query(query: String): Flux<String> =
         chatClientBuilder.build()
             .prompt()
             .advisors(vectorAdvisor)
             .advisors { it.param(CONVERSATION_ID, conversationIdValue) }
             .user(query)
-            .call()
+            .stream()
             .content()
 }
